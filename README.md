@@ -12,7 +12,7 @@ git clone --recursive https://github.com/ader47/comfyui_meshhamer.git
 cd comfyui_meshhamer
 cd mesh_hamer
 pip install -e .[all]
-cd third-party
+cd ./third-party/ViTPose
 pip install -e .
 ````
 
