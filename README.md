@@ -2,7 +2,9 @@
 ![](./images/example.png)
 
 ## Installation
-In `ComfyUI` root folder, run the following commands:
+Before installation, you should install the [`CUDA_Toolkit`](https://developer.nvidia.com/cuda-toolkit-archive) first.
+
+Enter to the `ComfyUI` root folder, run the following commands:
 
 ```shell
 cd custom_nodes
