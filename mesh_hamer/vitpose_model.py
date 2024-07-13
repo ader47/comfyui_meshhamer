@@ -76,12 +76,14 @@ class ViTPoseModel(object):
                                pose_results: list[np.ndarray],
                                kpt_score_threshold: float = 0.3,
                                vis_dot_radius: int = 4,
-                               vis_line_thickness: int = 1) -> np.ndarray:
+                               vis_line_thickness: int = 1,
+                               dataset='TopDownCocoWholeBodyDataset') -> np.ndarray:
         image = image[:, :, ::-1]  # RGB -> BGR
         vis = vis_pose_result(self.model,
                               image,
                               pose_results,
                               kpt_score_thr=kpt_score_threshold,
                               radius=vis_dot_radius,
-                              thickness=vis_line_thickness)
+                              thickness=vis_line_thickness,
+                              dataset=dataset)
         return vis[:, :, ::-1]  # BGR -> RGB
