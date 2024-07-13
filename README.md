@@ -24,7 +24,7 @@ You need to download the pretrained models:
 ```bash ./mesh_hamer/fetch_demo_data.sh```
 
 Besides these files, you also need to download the MANO model. 
-Please visit the MANO website and register to get access to the downloads section. 
+Please visit the [MANO](https://mano.is.tue.mpg.de/) website and register to get access to the downloads section. 
 We only require the right hand model. 
 You need to put `MANO_RIGHT.pkl` under the `mesh_hamer/_DATA/data/mano` folder.
 
@@ -60,3 +60,4 @@ The `DEVICE` can be set to `cpu` or `cuda` to use CPU or GPU respectively.
 Parts of the code are borrowed from the following repositories:
 - **[Hamer](https://github.com/geopavlakos/hamer/tree/main)**
 - **[controlnet_aux](https://github.com/huggingface/controlnet_aux)**
+- **[HandRefiner](https://github.com/wenquanlu/HandRefiner/tree/main)**
