@@ -16,9 +16,7 @@ cd ./third-party/ViTPose
 pip install -e .
 ````
 
-## Configration
-
-### Download models
+## Download models
 I have uploaded the model files to the [Huggingface](https://huggingface.co/Edson125/mesh_hamer/tree/main).
 The checkpoints and model config files should be placed in the following structure:
 ```shell
@@ -40,7 +38,7 @@ The checkpoints and model config files should be placed in the following structu
       model_final_f05665.pkl
 ```
 
-### **Notice**
+## **Notice**
 **This pipline needs about 10GB VRAM**. If you have a GPU with less than 10GB VRAM, you can try to change `DEVICE` in the `config.py` file.
 ## TODO 
 - Change the `dectectron2` or `ViTPose` to reduce the VRAM usage.
