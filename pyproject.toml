@@ -1,0 +1,14 @@
+[project]
+name = "comfyui_meshhamer"
+description = "Nodes:MeshHamer Hand Refiner. See also: [a/HaMeR: Hand Mesh Recovery](https://github.com/geopavlakos/hamer/tree/main)"
+version = "1.0.0"
+license = "LICENSE"
+
+[project.urls]
+Repository = "https://github.com/ader47/comfyui_meshhamer"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "comfyui_meshhamer"
+Icon = ""
