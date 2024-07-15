@@ -69,13 +69,14 @@ class Mesh_Hamer_Depth_Map_Preprocessor:
     def execute(self, image, mask_bbox_padding=30, mask_type="based_on_depth", mask_expand=5, resolution=512,
                 rand_seed=88, left_hand_thr=0.6, right_hand_thr=0.6,hand_detect_thr=0.25, **kwargs):
         install_deps()
-        from custom_nodes.comfyui_meshhamer.mesh_hamer_detector import MeshHamerDetector
-        model = MeshHamerDetector.from_pretrained(checkpoint=MESH_HAMER_CHECKPOINT, body_detector='vitdet',hand_detect_thr=hand_detect_thr)
+        if not hasattr(self,'model'):
+            from custom_nodes.comfyui_meshhamer.mesh_hamer_detector import MeshHamerDetector
+            self.model = MeshHamerDetector.from_pretrained(checkpoint=MESH_HAMER_CHECKPOINT, body_detector='vitdet',hand_detect_thr=hand_detect_thr)
         depth_map_list = []
         mask_list = []
         for single_image in image:
             np_image = np.asarray(single_image.cpu() * 255., dtype=np.uint8)
-            depth_map, mask, info = model(np_image, output_type="np", detect_resolution=resolution,
+            depth_map, mask, info = self.model(np_image, output_type="np", detect_resolution=resolution,
                                           mask_bbox_padding=mask_bbox_padding, seed=rand_seed,
                                           left_confidence=left_hand_thr, right_confidence=right_hand_thr)
             if mask_type == "based_on_depth":
@@ -94,7 +95,6 @@ class Mesh_Hamer_Depth_Map_Preprocessor:
             mask_list.append(torch.from_numpy(mask.astype(np.float32) / 255.0))
         depth_maps, masks = torch.stack(depth_map_list, dim=0), rearrange(torch.stack(mask_list, dim=0),
                                                                           "n h w 1 -> n 1 h w")
-        del model
         return depth_maps, expand_mask(masks, mask_expand, tapered_corners=True)
 
 
@@ -104,66 +104,11 @@ def normalize_size_base_64(w, h):
     return short_side - remainder + (64 if remainder > 0 else 0)
 
 
-# class Mesh_Graphormer_With_ImpactDetector_Depth_Map_Preprocessor:
-#     @classmethod
-#     def INPUT_TYPES(s):
-#         types = create_node_input_types(
-#             # Impact pack
-#             bbox_threshold=("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
-#             bbox_dilation=("INT", {"default": 10, "min": -512, "max": 512, "step": 1}),
-#             bbox_crop_factor=("FLOAT", {"default": 3.0, "min": 1.0, "max": 10, "step": 0.1}),
-#             drop_size=("INT", {"min": 1, "max": MAX_RESOLUTION, "step": 1, "default": 10}),
-#             # Mesh Graphormer
-#             mask_bbox_padding=("INT", {"default": 30, "min": 0, "max": 100}),
-#             mask_type=(["based_on_depth", "tight_bboxes", "original"], {"default": "based_on_depth"}),
-#             mask_expand=("INT", {"default": 5, "min": -MAX_RESOLUTION, "max": MAX_RESOLUTION, "step": 1}),
-#             rand_seed=("INT", {"default": 88, "min": 0, "max": 0xffffffffffffffff}),
-#         )
-#         types["required"]["bbox_detector"] = ("BBOX_DETECTOR", )
-#         return types
-#
-#     RETURN_TYPES = ("IMAGE", "MASK")
-#     RETURN_NAMES = ("IMAGE", "INPAINTING_MASK")
-#     FUNCTION = "execute"
-#
-#     CATEGORY = "ControlNet Preprocessors/Normal and Depth Estimators"
-#
-#     def execute(self, image, bbox_detector, bbox_threshold=0.5, bbox_dilation=10, bbox_crop_factor=3.0, drop_size=10, resolution=512, **mesh_graphormer_kwargs):
-#         install_deps()
-#         from controlnet_aux.mesh_graphormer import MeshGraphormerDetector
-#         mesh_graphormer_node = Mesh_Graphormer_Depth_Map_Preprocessor()
-#         model = MeshGraphormerDetector.from_pretrained(detect_thr=0.6, presence_thr=0.6).to(model_management.get_torch_device())
-#         mesh_graphormer_kwargs["model"] = model
-#
-#         frames = image
-#         depth_maps, masks = [], []
-#         for idx in range(len(frames)):
-#             frame = frames[idx:idx+1,...] #Impact Pack's BBOX_DETECTOR only supports single batch image
-#             bbox_detector.setAux('face') # make default prompt as 'face' if empty prompt for CLIPSeg
-#             _, segs = bbox_detector.detect(frame, bbox_threshold, bbox_dilation, bbox_crop_factor, drop_size)
-#             bbox_detector.setAux(None)
-#
-#             n, h, w, _ = frame.shape
-#             depth_map, mask = torch.zeros_like(frame), torch.zeros(n, 1, h, w)
-#             for i, seg in enumerate(segs):
-#                 x1, y1, x2, y2 = seg.crop_region
-#                 cropped_image = frame[:, y1:y2, x1:x2, :]  # Never use seg.cropped_image to handle overlapping area
-#                 mesh_graphormer_kwargs["resolution"] = 0 #Disable resizing
-#                 sub_depth_map, sub_mask = mesh_graphormer_node.execute(cropped_image, **mesh_graphormer_kwargs)
-#                 depth_map[:, y1:y2, x1:x2, :] = sub_depth_map
-#                 mask[:, :, y1:y2, x1:x2] = sub_mask
-#
-#             depth_maps.append(depth_map)
-#             masks.append(mask)
-#
-#         return (torch.cat(depth_maps), torch.cat(masks))
 
 NODE_CLASS_MAPPINGS = {
     "Meshamer-DepthMapPreprocessor": Mesh_Hamer_Depth_Map_Preprocessor,
-    # "MeshGraphormer+ImpactDetector-DepthMapPreprocessor": Mesh_Graphormer_With_ImpactDetector_Depth_Map_Preprocessor
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Meshamer-DepthMapPreprocessor": "MeshHamer Hand Refiner",
-    # "MeshGraphormer+ImpactDetector-DepthMapPreprocessor": "MeshHamer Hand Refiner With External Detector"
 }

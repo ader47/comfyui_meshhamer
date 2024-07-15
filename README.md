@@ -19,15 +19,7 @@ pip install -e .
 ## Configration
 
 ### Download models
-You need to download the pretrained models:
-
-```bash ./mesh_hamer/fetch_demo_data.sh```
-
-Besides these files, you also need to download the MANO model. 
-Please visit the [MANO](https://mano.is.tue.mpg.de/) website and register to get access to the downloads section. 
-We only require the right hand model. 
-You need to put `MANO_RIGHT.pkl` under the `mesh_hamer/_DATA/data/mano` folder.
-
+I have uploaded the model files to the [Huggingface](https://huggingface.co/Edson125/mesh_hamer/tree/main).
 The checkpoints and model config files should be placed in the following structure:
 ```shell
 - comfyui_meshhamer
@@ -45,10 +37,8 @@ The checkpoints and model config files should be placed in the following structu
         - vitpose_ckpts
           - vitpose+_huge
             wholebody.pth
+      model_final_f05665.pkl
 ```
-### Config file
-In `config.py` file, you should change `CACHE_DIR_HAMER`, `DETECTRON2_INIT_CHECKPOINT` and `MESH_HAMER_CHECKPOINT` to your own path.
-The `DEVICE` can be set to `cpu` or `cuda` to use CPU or GPU respectively.
 
 ### **Notice**
 **This pipline needs about 10GB VRAM**. If you have a GPU with less than 10GB VRAM, you can try to change `DEVICE` in the `config.py` file.
