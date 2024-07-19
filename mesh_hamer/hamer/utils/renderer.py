@@ -154,21 +154,22 @@ class Renderer:
         self.img_res = cfg.MODEL.IMAGE_SIZE
 
         # add faces that make the hand mesh watertight
-        faces_new = np.array([[92, 38, 234],
-                              [234, 38, 239],
-                              [38, 122, 239],
-                              [239, 122, 279],
-                              [122, 118, 279],
-                              [279, 118, 215],
-                              [118, 117, 215],
-                              [215, 117, 214],
-                              [117, 119, 214],
-                              [214, 119, 121],
-                              [119, 120, 121],
-                              [121, 120, 78],
-                              [120, 108, 78],
-                              [78, 108, 79]])
-        faces = np.concatenate([faces, faces_new], axis=0)
+        # hand refiner doesn't need this
+        # faces_new = np.array([[92, 38, 234],
+        #                       [234, 38, 239],
+        #                       [38, 122, 239],
+        #                       [239, 122, 279],
+        #                       [122, 118, 279],
+        #                       [279, 118, 215],
+        #                       [118, 117, 215],
+        #                       [215, 117, 214],
+        #                       [117, 119, 214],
+        #                       [214, 119, 121],
+        #                       [119, 120, 121],
+        #                       [121, 120, 78],
+        #                       [120, 108, 78],
+        #                       [78, 108, 79]])
+        # faces = np.concatenate([faces, faces_new], axis=0)
 
         self.camera_center = [self.img_res // 2, self.img_res // 2]
         self.faces = faces
